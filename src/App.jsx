@@ -1,34 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { create } from "zustand";
+import "./App.css";
+
+const useBearStore = create((set) => ({
+  bears: 4,
+  increaseBearCount: () =>
+    set((state) => ({
+      bears: state.bears + 1,
+    })),
+  decreaseBearCount: () =>
+    set((state) => ({ bears: state.bears > 0 ? state.bears - 1 : 0 })),
+  killAllBears: () =>
+    set({
+      bears: 0,
+    }),
+}));
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    <>
+      <ShowBears />
+      <br />
+      <AddBear />
+      <RemoveBear />
+      <br />
+      <br />
+      <KillAllBears />
+    </>
+  );
 }
 
-export default App
+export default App;
+
+function ShowBears() {
+  const { bears } = useBearStore();
+  return <div>{bears} around here...</div>;
+}
+
+function AddBear() {
+  const { increaseBearCount } = useBearStore();
+  console.log(increaseBearCount);
+
+  return <button onClick={increaseBearCount}>add a bear</button>;
+}
+
+function RemoveBear() {
+  const { decreaseBearCount } = useBearStore();
+
+  return <button onClick={decreaseBearCount}>remove a bear</button>;
+}
+
+function KillAllBears() {
+  const killArrBears = useBearStore((state) => state.killAllBears);
+  console.log(killArrBears);
+
+  return <button onClick={killArrBears}>Kill all of them</button>;
+}
